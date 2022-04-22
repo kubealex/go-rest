@@ -21,10 +21,11 @@ func jsonBuilder() string {
 	gid := strconv.Itoa(os.Getgid())
 	pid := strconv.Itoa(os.Getpid())
 	pidLabel, _ := selinux.PidLabel(os.Getpid())
+	osVersion := runtime.GOOS
 	hostname, _ := os.Hostname()
 	secretFile := readFile()
 
-	jsonString := map[string]string{"emeaOpenDemoSession": varChecker(openDemo), "hostname": hostname, "userId": uid, "groupId": gid, "pid": pid, "pidLabel:": pidLabel, "secretFileContent": secretFile}
+	jsonString := map[string]string{"emeaOpenDemoSession": varChecker(openDemo), "hostname": hostname, "userId": uid, "groupId": gid, "osVersion": osVersion, "pid": pid, "pidLabel:": pidLabel, "secretFileContent": secretFile}
 	jsonResult, _ := json.MarshalIndent(jsonString, "", "   ")
 	log.Println("JSON payload prepared, sending response...")
 	return string(jsonResult)
