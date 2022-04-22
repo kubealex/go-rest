@@ -17,19 +17,21 @@ import (
 // Utilities
 func jsonBuilder() string {
 	openDemo := os.Getenv("SESSION_NAME")
+	uid := strconv.Itoa(os.Getuid())
+	gid := strconv.Itoa(os.Getgid())
 	pid := strconv.Itoa(os.Getpid())
 	pidLabel, _ := selinux.PidLabel(os.Getpid())
 	hostname, _ := os.Hostname()
 	secretFile := readFile()
 
-	jsonString := map[string]string{"A RED HAT OPEN DEMO SESSION": varChecker(openDemo), "HOSTNAME": hostname, "PID": pid, "PID_LABEL": pidLabel, "SECRET_FILE_CONTENT": secretFile}
+	jsonString := map[string]string{"emeaOpenDemoSession": varChecker(openDemo), "hostname": hostname, "userId": uid, "groupId": gid, "pid": pid, "pidLabel:": pidLabel, "secretFileContent": secretFile}
 	jsonResult, _ := json.MarshalIndent(jsonString, "", "   ")
 	log.Println("JSON payload prepared, sending response...")
 	return string(jsonResult)
 }
 
 func readFile() string {
-	content, err := ioutil.ReadFile("/secretfile/mysecret")
+	content, err := ioutil.ReadFile("/configdir/myconfigfile")
 	if err != nil {
 		return "THE SPECIFIED FILE WAS NOT FOUND"
 	} else {
